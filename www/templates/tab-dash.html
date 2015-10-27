@@ -1,0 +1,23 @@
+<ion-view view-title="Week">
+  <ion-content scroll="false">
+    <section class="calendar-container">
+      
+      <div id="friends-container">
+         <div ng-repeat="friend in friends" class="dragImage" ng-drag="true" ng-drag-data="friend" data
+         -allow-transform="true" style="background: url('{{friend.image_url}}'); background-size: cover;"></div>
+      </div>
+
+      <div ng-repeat="day in days" class="button-bar day">
+        <div class="button button-assertive">
+          <b>{{ day.name }}</b><br/>
+          {{ day.date }}
+        </div>
+        <div ng-repeat="hour in day.hours" class="button button-balanced hour" style="background: {{ hour.color }};" ng-drop="true" ng-drop-success="hour.onDropComplete($data,$event)">
+          <div ng-repeat="attendee in hour.attendees" ng-drag="true" ng-drag-data="attendee" ng-drag-success="hour.onDragSuccess($data,$event)" ng-center-anchor="{{centerAnchor}}" class="small-image" style="background: url('{{attendee.image_url}}'); background-size: cover;">
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </ion-content>
+</ion-view>
