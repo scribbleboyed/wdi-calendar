@@ -2,7 +2,9 @@
   <ion-content>
     <ion-list>
       <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="event in events" type="item-text-wrap" href="#/tab/events/{{event.id}}">
-        <h2><b>{{event.title}}</b></h2>
+        <h2><b>{{event.title}}</b>
+          <div ng-repeat="attendee in event.attendees" class="small-image" style="background: url('{{attendee.image_url}}'); background-size: cover;">
+        </h2>
         <p>{{event.date}}</p>
         <i class="icon ion-chevron-right icon-accessory"></i>
 
