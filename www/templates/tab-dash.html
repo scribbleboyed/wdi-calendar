@@ -5,11 +5,11 @@
       <div ng-repeat="day in days" class="button-bar day" >
         <div class="button button-calm">
           <b style="padding: 0px; font-size: 17px; text-shadow: 1px 1px 1px #999;">{{ day.name }}</b><br/>
-          <span style="position: relative; top: -20px; font-size: 11px; font-weight: bold;">{{ day.date }}</span>
+          <span style="position: relative; top: -20px; font-size: 11px; font-weight: bold;">{{ day.date_string }}</span>
         </div>
         <div ng-repeat="hour in day.hours" class="button button-balanced hour" style="background: {{ hour.color }};" ng-drop="true" ng-drop-success="hour.onDropComplete($data,$event)">
-          <div ng-repeat="attendee in hour.event[0].attendees" ng-drag="true" ng-drag-data="attendee" ng-drag-success="hour.onDragSuccess($data,$event)" ng-center-anchor="{{centerAnchor}}" class="small-image" style="background: url('{{attendee.image_url}}'); background-size: cover;">
-          </div>
+          <div ng-repeat="attendee in hour.event.attendees" class="small-image" ng-drag="true" ng-drag-data="attendee" data
+         -allow-transform="true" style="background: url('{{attendee.image_url}}'); background-size: cover;"></div>
         </div>
       </div>
 

@@ -1,19 +1,8 @@
 angular.module('starter.controllers', ['ngDraggable'])
 
-.controller('CalendarCtrl', function($scope, Friends, Events) {
+.controller('CalendarCtrl', function($scope, $http, Friends) {
 
   $scope.friendsDiv = 0; // hide/show friends div parameter
-
-  var eventObject = function(attendee, date, hour) {
-    this.attendees = [];
-    this.attendees.push(attendee);
-    this.date = date;
-    this.hour = hour;
-  };
-
-  $scope.getEvent = function(queryDate, queryHour) {
-    return Events.query({date: queryDate, hour: queryHour});
-  };
 
   // hour and day constructors
 
@@ -21,18 +10,16 @@ angular.module('starter.controllers', ['ngDraggable'])
     this.date = date;
     this.hour = hour;
     this.color = color;
-    this.event = $scope.getEvent(this.date, this.hour);
+    this.event = null;
     this.onDropComplete = function(data, evt) {
-      if (!this.event) {
-        this.event = new eventObject
-      }
       var index = this.event.indexOf(data);
       if (index == -1) this.event.push(data);
     };
   };
 
-  var dayObject = function(name, date) {
-    this.name = name;
+  var dayObject = function(day_name, date_string, date) {
+    this.name = day_name;
+    this.date_string = date_string;
     this.date = date;
     this.hours = [new hourObject(this.date, 'morning', '#DDDDDD'),
     new hourObject(this.date, 'lunch', '#CCCCCC'),
@@ -45,11 +32,30 @@ angular.module('starter.controllers', ['ngDraggable'])
 
   var dayDiff = 0;
 
+  $scope.updateEvent = function(dayIndex, hourIndex, date, hour) {
+    var urlString = 'http://sooperplanner.herokuapp.com/api/events/' + date + '/' + hour;
+    $http
+      .get(urlString)
+      .then(function(response) {
+        $scope.days[dayIndex].hours[hourIndex].event = response.data[0];
+      });
+  };
+
   $scope.updateCalendar = function() {
     $scope.days = [];
     for (var i=0; i<7; i++) {
-      var day = moment().add(dayDiff + i, 'days');
-      $scope.days.push(new dayObject(day.format('dddd').substring(0,3), day.format('ll')));
+      var current_day = moment().add(dayDiff + i, 'days');
+      var current_day_name = current_day.format('dddd').substring(0,3);
+      var current_day_date_string = current_day.format('ll').split(',')[0];
+      var current_day_date = current_day.format('YYYYMMDD');
+      var day = new dayObject(current_day_name, current_day_date_string, current_day_date);
+      $scope.days.push(day);
+    }
+
+    for (var j=0; j<$scope.days.length; j++) {
+      for (var k=0; k<$scope.days[j].hours.length; k++) {
+        $scope.updateEvent(j, k, $scope.days[j].date, $scope.days[j].hours[k].hour);
+      }
     }
   };
 
